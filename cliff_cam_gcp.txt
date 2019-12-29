@@ -1,0 +1,5 @@
+Cliff station camera gcp from google earth - [Easting, Northing, Elevation, image_u,image_v]-  Franklyn Dunbar - 2019-11-27
+
+408231.06 6695828.35 1577.95 5192 546
+406009.06 6692207.29 1353 7149 655
+396969.45 6698501.70 1422 1848 112
