@@ -31,8 +31,8 @@ class Camera():
 		for X_point in X_world:
 			x = np.ravel(X_point[:,0]/X_point[:,2])
 			y = np.ravel(X_point[:,1]/X_point[:,2])
-			u = x*self.focal_length + self.sensor_x/2 #sensor location
-			v = y*self.focal_length + self.sensor_y/2
+			u = x*self.focal_length + (self.imagew/2) #sensor location
+			v = y*self.focal_length + (self.imageh/2)
 
 			imgCords.append((u,v))
 		return imgCords
@@ -183,8 +183,8 @@ class Camera():
 		print( "============ Done ============","\n\n")
 
 if __name__ == '__main__':	
-	check_gcp_path = '/home/fdunbar/Research/wolverine/DF_TLCs/tlcameras.txt'
-	path = '/home/fdunbar/Research/wolverine'
+	check_gcp_path = '/home/dunbar/Research/wolverine/DF_TLCs/tlcameras.txt'
+	path = '/home/dunbar/Research/wolverine'
 	#cliff = 'ref_cliff.JPG' #reference images to extract meta-data and predict gcp location
 	tounge = 'ref_tounge.JPG'
 	#weather = 'ref_wx.JPG'
@@ -192,8 +192,8 @@ if __name__ == '__main__':
 	tounge_gcp = 'tounge_cam_gcp.txt'
 	#weather_gcp = 'wx_cam_gcp.txt'
 	#cliff_pose = (393506.713,6695855.641,961.337,np.radians(0),np.radians(-5),np.radians(80)) # easting, northing, elevation (m), roll, pitch, yaw
-	tounge_pose = (393797.378, 6694756.620, 767.029,np.radians(0),np.radians(-0.5),np.radians(-1)) # easting, northing, elevation (m), roll, pitch, yaw
-	tounge_bounds = ((393797.37,393797.37), (6694756.620,6694756.62 ),(767.029,767.029),(np.radians(-5),np.radians(5)),(np.radians(-5),np.radians(5)),(np.radians(-5),np.radians(10)))
+	tounge_pose = (393797.378, 6694756.620, 767.029,np.radians(0),np.radians(5),np.radians(5)) # easting, northing, elevation (m), roll, pitch, yaw
+	tounge_bounds = ((393797.37,393797.38), (6694756.620,6694756.63 ),(767.029,767.03),(np.radians(-5),np.radians(5)),(np.radians(-5),np.radians(10)),(np.radians(-5),np.radians(10)))
 	#weather_pose = (392875.681,6696842.618,1403.860,np.radians(0),np.radians(-15),np.radians(105)) # easting, northing, elevation (m), roll, pitch, yaw
 	'''
 	print("Processing Cliff \n")
