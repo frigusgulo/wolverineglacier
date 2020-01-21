@@ -78,7 +78,7 @@ class Camera():
 		uv = np.ndarray.flatten(func(x, p))
 		temp = y.ravel().astype('float64')
 		ss = temp - uv
-		return np.sum(ss**2)
+		return np.mean(ss**2)
 
 	def estimate_pose(self):
 		# estimate_pose -> _errfunc -> rotational_transform -> projective_transform
