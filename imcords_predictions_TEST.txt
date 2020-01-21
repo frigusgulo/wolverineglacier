@@ -1,0 +1,14 @@
+Camera Pose (Easting, Northing, Elevation, Roll, Pitch, Yaw : [3.93797378e+05 6.69475662e+06 7.67029000e+02 0.00000000e+00
+ 0.00000000e+00 0.00000000e+00]
+control2 | World Cords (Easting,Northing,Elev) :  393868.946 6695316.571 644.398  | Predicted Image Cords (U,V) TEST:  4038.0 3069.0 
+control3 | World Cords (Easting,Northing,Elev) :  393782.185 6695439.802 675.140  | Predicted Image Cords (U,V) TEST:  3618.0 2833.0 
+control4 | World Cords (Easting,Northing,Elev) :  393610.609 6695578.333 782.287  | Predicted Image Cords (U,V) TEST:  3044.0 2404.0 
+glacier1 | World Cords (Easting,Northing,Elev) :  394097.434 6695625.150 683.678  | Predicted Image Cords (U,V) TEST:  4647.0 2725.0 
+glacier2 | World Cords (Easting,Northing,Elev) :  394097.980 6695889.873 747.501  | Predicted Image Cords (U,V) TEST:  4423.0 2504.0 
+glacier3 | World Cords (Easting,Northing,Elev) :  394258.679 6696097.753 809.653  | Predicted Image Cords (U,V) TEST:  4643.0 2367.0 
+margin1 | World Cords (Easting,Northing,Elev) :  394569.509 6695550.678 621.075  | Predicted Image Cords (U,V) TEST:  6403.0 2971.0 
+margin2 | World Cords (Easting,Northing,Elev) :  394537.120 6695346.838 575.575  | Predicted Image Cords (U,V) TEST:  7189.0 3364.0 
+snowy | World Cords (Easting,Northing,Elev) :  393646.770 6696293.364 947.709  | Predicted Image Cords (U,V) TEST:  3406.0 2127.0 
+tlcliff | World Cords (Easting,Northing,Elev) :  393506.713 6695855.641 961.337  | Predicted Image Cords (U,V) TEST:  2939.0 1961.0 
+tltongue | World Cords (Easting,Northing,Elev) :  393797.378 6694756.620 767.029  | Predicted Image Cords (U,V) TEST:  0 0 
+tlweather | World Cords (Easting,Northing,Elev) :  392875.681 6696842.618 1403.860  | Predicted Image Cords (U,V) TEST:  2443.0 1601.0 

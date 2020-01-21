@@ -1,14 +1,14 @@
-Camera Pose (Easting, Northing, Elevation, Roll, Pitch, Yaw : [ 3.93797370e+05  6.69475662e+06  7.67029000e+02 -1.70270901e-02
-  3.92823000e-02 -3.29615526e-02]
-control2 | World Cords (Easting,Northing,Elev) :  393868.946 6695316.571 644.398  | Predicted Image Cords (U,V) Tounge_cam:  2619.0 1481.0 
-control3 | World Cords (Easting,Northing,Elev) :  393782.185 6695439.802 675.140  | Predicted Image Cords (U,V) Tounge_cam:  2980.0 2352.0 
-control4 | World Cords (Easting,Northing,Elev) :  393610.609 6695578.333 782.287  | Predicted Image Cords (U,V) Tounge_cam:  2479.0 3168.0 
-glacier1 | World Cords (Easting,Northing,Elev) :  394097.434 6695625.150 683.678  | Predicted Image Cords (U,V) Tounge_cam:  947.0 478.0 
-glacier2 | World Cords (Easting,Northing,Elev) :  394097.980 6695889.873 747.501  | Predicted Image Cords (U,V) Tounge_cam:  854.0 532.0 
-glacier3 | World Cords (Easting,Northing,Elev) :  394258.679 6696097.753 809.653  | Predicted Image Cords (U,V) Tounge_cam:  719.0 432.0 
-margin1 | World Cords (Easting,Northing,Elev) :  394569.509 6695550.678 621.075  | Predicted Image Cords (U,V) Tounge_cam:  704.0 120.0 
-margin2 | World Cords (Easting,Northing,Elev) :  394537.120 6695346.838 575.575  | Predicted Image Cords (U,V) Tounge_cam:  736.0 26.0 
-snowy | World Cords (Easting,Northing,Elev) :  393646.770 6696293.364 947.709  | Predicted Image Cords (U,V) Tounge_cam:  919.0 1075.0 
-tlcliff | World Cords (Easting,Northing,Elev) :  393506.713 6695855.641 961.337  | Predicted Image Cords (U,V) Tounge_cam:  987.0 1567.0 
-tltongue | World Cords (Easting,Northing,Elev) :  393797.378 6694756.620 767.029  | Predicted Image Cords (U,V) Tounge_cam:  nan nan 
-tlweather | World Cords (Easting,Northing,Elev) :  392875.681 6696842.618 1403.860  | Predicted Image Cords (U,V) Tounge_cam:  779.0 1889.0 
+Camera Pose (Easting, Northing, Elevation, Roll, Pitch, Yaw : [ 3.93797378e+05  6.69475662e+06  7.67029000e+02 -2.62404404e-01
+  3.75700000e-01  6.77195676e-01]
+control2 | World Cords (Easting,Northing,Elev) :  393868.946 6695316.571 644.398  | Predicted Image Cords (U,V) Tounge_cam:  1174.0 3876.0 
+control3 | World Cords (Easting,Northing,Elev) :  393782.185 6695439.802 675.140  | Predicted Image Cords (U,V) Tounge_cam:  607.0 3407.0 
+control4 | World Cords (Easting,Northing,Elev) :  393610.609 6695578.333 782.287  | Predicted Image Cords (U,V) Tounge_cam:  -209.0 2458.0 
+glacier1 | World Cords (Easting,Northing,Elev) :  394097.434 6695625.150 683.678  | Predicted Image Cords (U,V) Tounge_cam:  2225.0 3544.0 
+glacier2 | World Cords (Easting,Northing,Elev) :  394097.980 6695889.873 747.501  | Predicted Image Cords (U,V) Tounge_cam:  2078.0 3231.0 
+glacier3 | World Cords (Easting,Northing,Elev) :  394258.679 6696097.753 809.653  | Predicted Image Cords (U,V) Tounge_cam:  2385.0 3146.0 
+margin1 | World Cords (Easting,Northing,Elev) :  394569.509 6695550.678 621.075  | Predicted Image Cords (U,V) Tounge_cam:  3566.0 4037.0 
+margin2 | World Cords (Easting,Northing,Elev) :  394537.120 6695346.838 575.575  | Predicted Image Cords (U,V) Tounge_cam:  3912.0 4418.0 
+snowy | World Cords (Easting,Northing,Elev) :  393646.770 6696293.364 947.709  | Predicted Image Cords (U,V) Tounge_cam:  849.0 2324.0 
+tlcliff | World Cords (Easting,Northing,Elev) :  393506.713 6695855.641 961.337  | Predicted Image Cords (U,V) Tounge_cam:  68.0 1763.0 
+tltongue | World Cords (Easting,Northing,Elev) :  393797.378 6694756.620 767.029  | Predicted Image Cords (U,V) Tounge_cam:  0.0 0.0 
+tlweather | World Cords (Easting,Northing,Elev) :  392875.681 6696842.618 1403.860  | Predicted Image Cords (U,V) Tounge_cam:  -726.0 774.0 
