@@ -24,7 +24,7 @@ class Camera():
 			for (tag, value) in exif_info.items():
 				tagname = TAGS.get(tag,tag)
 				self.metaData[tagname] = value
-			self.focal_length = int(self.metaData['FocalLength'][0]/self.metaData['FocalLength'][1])
+			self.focal_length = int(self.metaData['FocalLength'][0]/self.metaData['FocalLength'][1])*self.imagew/36
 			self.cameraMatrix = np.array([[self.focal_length,0,self.imagew/2],[0,self.focal_length,self.imageh/2],[0,0,1]])
 
 	def procGCP(self,_file):
@@ -43,40 +43,22 @@ class Camera():
 				imgcords.append(img)
 				print("World: ",world, " Image: ",img,"\n")
 		file.close()
-		self.worldGCP = np.array(worldcords).astype('float64')
-		self.imgGCP = np.array(imgcords).astype('float64')
+		self.worldGCP = np.squeeze(np.array(worldcords).astype('float64'))
+		self.imgGCP = np.squeeze(np.array(imgcords).astype('float64'))
 
 	def estimatePose(self):
 		print("Estimating Pose for ", str(self.instance),"\n")
-		self.rvel ,self.rvec,self.tvec = cv2.solvePnP(self.worldGCP,self.imgGCP,self.cameraMatrix,distCoeffs=None,rvec=self.rvec,tvec=self.tvec,useExtrinsicGuess=1)
-		print(self.rvel)
-		print("Pose Estimate: ", " Easting,Northing,Elevation ", self.tvec, " Roll, Pitch, Yaw ", self.rvec)
+		_ ,self.rvec,self.tvec = cv2.solvePnP(self.worldGCP,self.imgGCP,self.cameraMatrix,distCoeffs=None,rvec=self.rvec,tvec=self.tvec,useExtrinsicGuess=1)
+		self.R = np.zeros((3,3))
+		cv2.Rodrigues(self.rvec,self.R)
+		angle = self.R@np.ones((3,1))
+		self.R = np.append(self.R,self.tvec,1)
+		self.world2img = self.cameraMatrix@self.R
 
+		print("Pose Estimate: ", " Easting,Northing,Elevation ", -1*self.tvec, "\n\n", " Roll, Pitch, Yaw: ", angle)
 
-	def transMat(self):
-		if self.cameraMatrix is not None:
-			'''
-			s = np.sin
-			c = np.cos
-			location = self.tvec
-			roll = np.radians(self.rvec[0])
-			pitch = np.radians(self.rvec[1])
-			yaw = np.radians(self.rvec[2])
-			r_yaw = np.mat(([c(yaw), -s(yaw), 0], [s(yaw), c(yaw), 0], [0, 0, 1])).astype('float64')
-			r_pitch = np.mat(([1, 0, 0], [0, c(pitch), s(pitch)], [0, -s(pitch), c(pitch)])).astype('float64')
-			r_roll = np.mat(([c(roll), 0, -s(roll)], [0, 1, 0], [s(roll), 0, c(roll)])).astype('float64')
-			r_axis = np.mat(([1, 0, 0], [0, 0, -1], [0, 1, 0])).astype('float64')
-			R =  r_axis@r_roll@r_pitch@r_yaw 
-			'''
-			R = np.zeros((3,3))
-			cv2.Rodrigues(self.tvec,R)
-			R = np.append(R,self.tvec,1)
-			self.world2img = self.cameraMatrix@R
 
 	def _world2img(self,X):
-		if self.world2img is None:
-		 	self.transMat()
-
 		uv = self.world2img@X
 		return uv
 
@@ -101,7 +83,7 @@ class Camera():
 				X = np.array([x,y,z,1]).astype('float64')
 				#print("gcp_imgcords_predict Debug: ", X,"\n\n")
 				uv = self._world2img(X)
-				print(uv)
+				
 				#if (uv[0] <= self.imagew and uv[0] >= 0 ) and (uv[1] <= self.imageh and uv[1] >=0) :
 				predictions.append((name, "| World Cords (Easting,Northing,Elev) : ",x,y,z, " | Predicted Image Cords (U,V) "+self.instance + ": ", np.round(uv[0]), np.round(uv[1])))
 		file.close()
@@ -136,19 +118,17 @@ if __name__ == '__main__':
 	cliff_cam.gcp_imgcords_predict(check_gcp_path)
 	
 	'''
-	print("Processing Tounge \n")
-	tounge_cam = Camera(image= os.path.join(path,tounge), pose=tounge_pose,bounds= tounge_bounds, instance="Tounge_cam")
-	tounge_cam.extract_metadata()
-	tounge_cam.choosen_gcp_assign(os.path.join(path,tounge_gcp))
-	tounge_cam.estimate_pose()
-	tounge_cam.gcp_imgcords_predict(check_gcp_path)
-	
-	print("Processing Weather \n")
-	weather_cam = Camera(image= os.path.join(path,weather), pose=weather_pose, instance="Weather_cam")
-	weather_cam.extract_metadata()
-	weather_cam.choosen_gcp_assign(os.path.join(path,weather_gcp))
-	weather_cam.estimate_pose()
-	weather_cam.gcp_imgcords_predict(check_gcp_path)
+	print("Processing Tounge ")
+	cliff_cam = Camera(image= os.path.join(path,tounge), rvec=tounge_pose[:3],tvec=tounge_pose[3:], instance="tounge_cam")
+	cliff_cam.extract_metadata()
+	cliff_cam.procGCP(os.path.join(path,tounge_gcp))
+	cliff_cam.estimatePose()
+	cliff_cam.gcp_imgcords_predict(check_gcp_path)
 
-
-    '''        
+    print("Processing Weather")
+	cliff_cam = Camera(image= os.path.join(path,weather), rvec=weather_pose[:3],tvec=weather_pose[3:], instance="weather_cam")
+	cliff_cam.extract_metadata()
+	cliff_cam.procGCP(os.path.join(path,weather_gcp))
+	cliff_cam.estimatePose()
+	cliff_cam.gcp_imgcords_predict(check_gcp_path)
+'''
