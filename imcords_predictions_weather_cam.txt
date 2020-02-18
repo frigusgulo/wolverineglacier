@@ -1,0 +1,17 @@
+Camera Pose (Easting, Northing, Elevation, Roll, Pitch, Yaw : [[ 1.91222130e+07]
+ [-4.82494303e+07]
+ [ 3.56669461e+08]][[2.25250150e+07]
+ [3.83701691e+08]
+ [1.17654936e+06]]
+control2 | World Cords (Easting,Northing,Elev) :  393868.946 6695316.571 644.398  | Predicted Image Cords (U,V) weather_cam:  1424569368174.0 637445304992.0 
+control3 | World Cords (Easting,Northing,Elev) :  393782.185 6695439.802 675.140  | Predicted Image Cords (U,V) weather_cam:  1424569013471.0 637446100143.0 
+control4 | World Cords (Easting,Northing,Elev) :  393610.609 6695578.333 782.287  | Predicted Image Cords (U,V) weather_cam:  1424568496178.0 637447180825.0 
+glacier1 | World Cords (Easting,Northing,Elev) :  394097.434 6695625.150 683.678  | Predicted Image Cords (U,V) weather_cam:  1424570790716.0 637447142948.0 
+glacier2 | World Cords (Easting,Northing,Elev) :  394097.980 6695889.873 747.501  | Predicted Image Cords (U,V) weather_cam:  1424571052140.0 637448819924.0 
+glacier3 | World Cords (Easting,Northing,Elev) :  394258.679 6696097.753 809.653  | Predicted Image Cords (U,V) weather_cam:  1424572190623.0 637450143996.0 
+margin1 | World Cords (Easting,Northing,Elev) :  394569.509 6695550.678 621.075  | Predicted Image Cords (U,V) weather_cam:  1424573146383.0 637446497469.0 
+margin2 | World Cords (Easting,Northing,Elev) :  394537.120 6695346.838 575.575  | Predicted Image Cords (U,V) weather_cam:  1424572783120.0 637445219449.0 
+snowy | World Cords (Easting,Northing,Elev) :  393646.770 6696293.364 947.709  | Predicted Image Cords (U,V) weather_cam:  1424569365978.0 637451688695.0 
+tlcliff | World Cords (Easting,Northing,Elev) :  393506.713 6695855.641 961.337  | Predicted Image Cords (U,V) weather_cam:  1424568641874.0 637449224881.0 
+tltongue | World Cords (Easting,Northing,Elev) :  393797.378 6694756.620 767.029  | Predicted Image Cords (U,V) weather_cam:  1424569456832.0 637442394302.0 
+tlweather | World Cords (Easting,Northing,Elev) :  392875.681 6696842.618 1403.860  | Predicted Image Cords (U,V) weather_cam:  1424566938787.0 637456062172.0 

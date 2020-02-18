@@ -1,0 +1,61 @@
+class Net(nn.Module):
+    def __init__(self,layers, input_size, num_class,batch_size):
+        super(Net, self).__init__()
+        self.bs = batch_size
+        self.input = input_size
+        self.classes = num_class
+        self.layers = layers
+        self.conv1 = nn.Conv2d(self.bs,1,28,28,2)
+        self.conv2 = nn.Conv2d(self.bs,1,28,28,2)
+        self.linears = nn.ModuleList([nn.Linear(self.input,self.input)])
+        self.linears.extend([nn.Linear(self.input, self.input) for i in range(1, self.layers-1)])
+        self.linears.append(nn.Linear(self.input, self.classes))
+        
+    def forward(self, x):
+        temp = None
+        i = 0
+        x = self.conv1(x)
+        x = F.relu(x)
+        x = self.conv2(x)
+        for layer in self.linears:
+            if i%3 == 0:
+                x = torch.sigmoid(layer(x))
+                i += 1
+            else:
+                x = layer(x)
+                i += 1
+
+        return x   
+
+input_size = 784       # The image size = 28 x 28 = 784
+num_classes = 10       # The number of output classes. In this case, from 0 to 9
+num_epochs = 10         # The number of times entire dataset is trained
+batch_size = 100       # The size of input data took for one iteration
+learning_rate = 1e-3  # The speed of convergence
+net = Net(10, input_size,num_classes,batch_size)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(nn.ParameterList(net.parameters()), lr=learning_rate)
+
+for epoch in range(num_epochs):
+    for i, (images, labels) in enumerate(train_loader):   # Load a batch of images with its (index, data, class)
+        images = images.view(-1,28,28)
+        print(images.shape)
+        images = Variable(images[None,:, :, :])
+        print(images.shape)
+        labels = labels
+        optimizer.zero_grad() 
+        outputs = net.forward(images)                             # Forward pass: compute the output class given a image
+        loss = criterion(outputs, labels)                 # Compute the loss: difference between the output class and the pre-given label
+        loss.backward()                                   # Backward pass: compute the weight
+        optimizer.step()
+    total=0
+    correct=0
+    # Loop over all the test examples and accumulate the number of correct results in each batch
+    for d,t in test_loader:
+        outputs = net(d.view(-1,28*28))
+        _, predicted = torch.max(outputs.data,1)
+        total += Variable(t).size(0)
+        correct += (predicted==t).sum()
+        
+    # Print the epoch, the training loss, and the test set accuracy.
+    print(epoch,loss.item(),(100.*correct/total).item())

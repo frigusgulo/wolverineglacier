@@ -7,6 +7,7 @@ from PIL.ExifTags import TAGS
 import os
 import scipy
 import numpy as np
+import matplotlib.pyplot as plt
 '''
 This class takes in the cameras focal length, pose estimate (Easting, Northing, Elevation (m),roll, pitch, yaw) and sensor dimensions upon instantiation.
 
@@ -24,7 +25,7 @@ class Camera():
 		self.image = Image.open(image)
 		self.imagew, self.imageh = self.image.size
 		self.instance = instance # Keeps track of which station the script is performing on for file writing purposes
-    
+		self.imagepoints = []
 	def projective_transform(self,X_world):
 		imgCords = []
 		for X_point in X_world:
@@ -85,6 +86,10 @@ class Camera():
 		print("Estimating Pose","\n")
 		out = fmin_l_bfgs_b(self._errfunc, x0=self.p, args=(self.world_gcp, self.img_gcp, self._func),bounds=self.bounds,approx_grad=True,epsilon=6e-6,pgtol=1e-9 )
 		self.p = out[0]
+		for line in self.world_gcp:
+				x,y,z = line[0],line[1],line[2]
+				uv = self.world_to_ims(np.array([x,y,z]).astype('float64'))
+				self.imagepoints.append(uv)
 		print("Pose: " , self.p , "\n")
 		
 
@@ -98,13 +103,15 @@ class Camera():
 			print ("Found Meta Data!","\n")
 			for (tag, value) in exif_info.items():
 				tagname = TAGS.get(tag,tag)
+				#print(tagname,value)
+				#print("=======================")
 				self.metaData[tagname] = value
 			print(self.metaData['FocalLength'])
 
 		#print(self.metaData.keys())    #DEBUG
 		self.sensor_x = 35.9 #mm
 		self.sensor_y = 24 #mm
-		self.focal_length = int(self.metaData['FocalLength'][0])#/self.metaData['FocalLength'][1])* # THIS _getexif() method is a bunch of bullshit. need to find a way to extract meta data from images...
+		self.focal_length = int(self.metaData['FocalLength'][0]/self.metaData['FocalLength'][1])*self.imagew/35.9
 		
 		print("Meta Data: ", "focal: ", self.focal_length," | sensor (x,y): ", self.sensor_x, self.sensor_y, " image (height,width): ", self.imageh, self.imagew)
 		#self.focal_length*= self.sensor_x*self.sensor_y
@@ -115,7 +122,6 @@ class Camera():
 		
 		X = np.reshape(X,(1,3))
 		X = self.rotational_transform(X)
-		print("w2ims: ",X)
 		uv = np.zeros(2)
 		if X[:,2] != 0:
 			x = X[:,0] / X[:,2]
@@ -139,7 +145,7 @@ class Camera():
 				line = line.split()
 				world = line[:3]
 				img = line[3:]
-				worldcords.append(world)
+				worldcords.append(world)  #CHange
 				imgcords.append(img)
 		file.close()
 		self.world_gcp = np.array(worldcords).astype('float64')
@@ -169,6 +175,7 @@ class Camera():
 				X = np.array([x,y,z]).astype('float64')
 				#print("gcp_imgcords_predict Debug: ", X,"\n\n")
 				uv = self.world_to_ims(X)
+				self.imagepoints.append(uv)
 				#if (uv[0] <= self.imagew and uv[0] >= 0 ) and (uv[1] <= self.imageh and uv[1] >=0) :
 				predictions.append((name, "| World Cords (Easting,Northing,Elev) : ",x,y,z, " | Predicted Image Cords (U,V) "+self.instance + ": ", np.round(uv[0]), np.round(uv[1])))
 		file.close()
@@ -182,7 +189,22 @@ class Camera():
 		filehandle.close()
 		print( "============ Done ============","\n\n")
 
+	def plotPoints(self):
+		colors = iter(['r','b','g','c','y'])
+		image = plt.imshow(self.image)
+		pairings = zip(self.img_gcp, self.imagepoints)
+		for a,b in pairings:
+			color = str(next(colors))
+			print(a)
+			print(b)
+			print(color)
+			plt.scatter(a[0],a[1],c=color,marker='*')
+			plt.scatter(b[0],b[1],c='y')
+		plt.show()
+
+
 if __name__ == '__main__':	
+	rad = np.radians
 	check_gcp_path = '/home/dunbar/Research/wolverine/wolverineglacier/DF_TLCs/tlcameras.txt'
 	path = '/home/dunbar/Research/wolverine/'
 	cliff = 'ref_cliff.JPG' #reference images to extract meta-data and predict gcp location
@@ -191,30 +213,35 @@ if __name__ == '__main__':
 	cliff_gcp = 'wolverineglacier/cliff_cam_gcp.txt' #txt files for camera gcp's
 	tounge_gcp = 'wolverineglacier/tounge_cam_gcp.txt'
 	weather_gcp = 'wolverineglacier/wx_cam_gcp.txt'
-	cliff_pose = (393506.713,6695855.641,961.337,np.radians(0),np.radians(-5),np.radians(80)) # easting, northing, elevation (m), roll, pitch, yaw
+	cliff_pose = (393506.713,6695855.641,961.337,np.radians(0),np.radians(-5),np.radians(15)) # easting, northing, elevation (m), roll, pitch, yaw
 	tounge_pose = (393797.378, 6694756.620, 767.029,np.radians(0),np.radians(0),np.radians(0)) # easting, northing, elevation (m), roll, pitch, yaw
-	tounge_bounds = ((393797.378,393797.378), (6694756.620,6694756.620 ),(767.029,767.029),(-.5,.5),(-.4,.3757),(-1,.7))
+	#tounge_bounds = ((393797.378,393797.378), (6694756.620,6694756.620 ),(767.029,767.029),(-.5,.5),(-.4,.3757),(np.radians(-5),np.radians(20)))
+	tounge_bounds = ((393797.378,393797.378), (6694756.620,6694756.620 ),(767.029,767.029),(rad(0),rad(360)),(rad(0),rad(360)),(rad(0),rad(360)))
 	tounge_pose = (393797.378, 6694756.620, 767.029,0,np.radians(0),.5) # easting, northing, elevation (m), roll, pitch, yaw
 	weather_pose = (392875.681,6696842.618,1403.860,np.radians(0),np.radians(-15),np.radians(105)) # easting, northing, elevation (m), roll, pitch, yaw
 	
+	'''
 	print("Processing Cliff \n")
 	cliff_cam = Camera(image= os.path.join(path,cliff), pose=cliff_pose, instance="cliff_cam")
 	cliff_cam.extract_metadata()
 	cliff_cam.choosen_gcp_assign(os.path.join(path,cliff_gcp))
 	cliff_cam.estimate_pose()
 	cliff_cam.gcp_imgcords_predict(check_gcp_path)
-	
+	'''
+
 	print("Processing Tounge \n")
 	tounge_cam = Camera(image= os.path.join(path,tounge), pose=tounge_pose,bounds= tounge_bounds, instance="Tounge_cam")
 	tounge_cam.extract_metadata()
 	tounge_cam.choosen_gcp_assign(os.path.join(path,tounge_gcp))
 	tounge_cam.estimate_pose()
 	tounge_cam.gcp_imgcords_predict(check_gcp_path)
+	tounge_cam.plotPoints()
 	
+	'''
 	print("Processing Weather \n")
 	weather_cam = Camera(image= os.path.join(path,weather), pose=weather_pose, instance="Weather_cam")
 	weather_cam.extract_metadata()
 	weather_cam.choosen_gcp_assign(os.path.join(path,weather_gcp))
 	weather_cam.estimate_pose()
 	weather_cam.gcp_imgcords_predict(check_gcp_path)
-	
+	'''
