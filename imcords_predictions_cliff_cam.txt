@@ -1,17 +1,8 @@
-Camera Pose (Easting, Northing, Elevation, Roll, Pitch, Yaw : [[ -387008.89040028]
- [-6690658.29973739]
- [   -6852.81158213]][[ 2.25464552e+07]
- [ 3.83644278e+08]
- [-2.33134813e+05]]
-control2 | World Cords (Easting,Northing,Elev) :  393868.946 6695316.571 644.398  | Predicted Image Cords (U,V) cliff_cam:  -20812343.0 -11657995.0 
-control3 | World Cords (Easting,Northing,Elev) :  393782.185 6695439.802 675.140  | Predicted Image Cords (U,V) cliff_cam:  -20313217.0 -11075291.0 
-control4 | World Cords (Easting,Northing,Elev) :  393610.609 6695578.333 782.287  | Predicted Image Cords (U,V) cliff_cam:  -19548610.0 -10636624.0 
-glacier1 | World Cords (Easting,Northing,Elev) :  394097.434 6695625.150 683.678  | Predicted Image Cords (U,V) cliff_cam:  -22086746.0 -9886795.0 
-glacier2 | World Cords (Easting,Northing,Elev) :  394097.980 6695889.873 747.501  | Predicted Image Cords (U,V) cliff_cam:  -22117313.0 -8537894.0 
-glacier3 | World Cords (Easting,Northing,Elev) :  394258.679 6696097.753 809.653  | Predicted Image Cords (U,V) cliff_cam:  -23132183.0 -7429915.0 
-margin1 | World Cords (Easting,Northing,Elev) :  394569.509 6695550.678 621.075  | Predicted Image Cords (U,V) cliff_cam:  -24737062.0 -9923978.0 
-margin2 | World Cords (Easting,Northing,Elev) :  394537.120 6695346.838 575.575  | Predicted Image Cords (U,V) cliff_cam:  -24535548.0 -10987363.0 
-snowy | World Cords (Easting,Northing,Elev) :  393646.770 6696293.364 947.709  | Predicted Image Cords (U,V) cliff_cam:  -19814478.0 -6958880.0 
-tlcliff | World Cords (Easting,Northing,Elev) :  393506.713 6695855.641 961.337  | Predicted Image Cords (U,V) cliff_cam:  -19325305.0 -9553152.0 
-tltongue | World Cords (Easting,Northing,Elev) :  393797.378 6694756.620 767.029  | Predicted Image Cords (U,V) cliff_cam:  -21167778.0 -15184911.0 
-tlweather | World Cords (Easting,Northing,Elev) :  392875.681 6696842.618 1403.860  | Predicted Image Cords (U,V) cliff_cam:  -16345574.0 -5341885.0 
+Camera Pose ~ Easting, Northing, Elevation, Roll, Pitch, Yaw : [ 3.93506713e+05  6.69585564e+06  9.61337000e+02 -5.11312940e-02
+ -4.28189832e-01  1.25818450e+00  3.89329289e+03]
+glacier1 | World Cords (Easting,Northing,Elev) :  394097.434 6695625.150 683.678  | Predicted Image Cords (U,V) cliff_cam:  6436.0 2934.0 
+glacier2 | World Cords (Easting,Northing,Elev) :  394097.980 6695889.873 747.501  | Predicted Image Cords (U,V) cliff_cam:  4645.0 2228.0 
+glacier3 | World Cords (Easting,Northing,Elev) :  394258.679 6696097.753 809.653  | Predicted Image Cords (U,V) cliff_cam:  3733.0 1511.0 
+margin1 | World Cords (Easting,Northing,Elev) :  394569.509 6695550.678 621.075  | Predicted Image Cords (U,V) cliff_cam:  6153.0 2297.0 
+margin2 | World Cords (Easting,Northing,Elev) :  394537.120 6695346.838 575.575  | Predicted Image Cords (U,V) cliff_cam:  7102.0 2669.0 
+tlcliff | World Cords (Easting,Northing,Elev) :  393506.713 6695855.641 961.337  | Predicted Image Cords (U,V) cliff_cam:  3680.0 2456.0 
