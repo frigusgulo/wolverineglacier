@@ -149,6 +149,7 @@ class Camera():
 			next(file) #skip description line in text file
 			next(file)
 			for line in file:	
+				print(line)
 				line[line=='\t'] == ' '		
 				line = line.split()
 				world = line[:3]
@@ -224,17 +225,17 @@ if __name__ == '__main__':
 	tounge = 'ref_tounge.JPG'
 	weather = 'ref_wx.JPG'
 	cliff_gcp = 'wolverineglacier/cliff_cam_gcp.txt' #txt files for camera gcp's
-	tounge_gcp = 'wolverineglacier/tounge_cam_gcp.txt'
+	tounge_gcp = '/home/dunbar/Research/wolverine/wolverineglacier/tounge_cam_gcp.txt'
 	weather_gcp = 'wolverineglacier/wx_cam_gcp.txt'
-	cliff_pose = (393506.713,6695855.641,961.337,rad(0),rad(-5),rad(20)) # easting, northing, elevation (m), roll, pitch, yaw
-	cliff_bounds = ((393506.713,393506.713),(6695855.641,6695855.641),(961.337,961.337),(rad(-180),rad(180)),(rad(-180),rad(180)),(rad(-180),rad(180)),(2000,6000))
-	tounge_pose = (393797.378, 6694756.620, 767.029,np.radians(0),np.radians(10),np.radians(10)) # easting, northing, elevation (m), roll, pitch, yaw
-	tounge_bounds = ((393797.378,393797.378), (6694756.620,6694756.620 ),(767.029,767.029),(rad(-180),rad(180)),(rad(-180),rad(180)),(rad(-180),rad(180)),(2000,6000))
-	weather_pose = (392875.681,6696842.618,1403.860,np.radians(0),np.radians(-15),np.radians(105)) # easting, northing, elevation (m), roll, pitch, yaw
-	weather_bounds = ((392875.681,392875.681),(6696842.618,6696842.618),(1403.860,91403.860),(rad(-180),rad(180)),(rad(-180),rad(180)),(rad(-180),rad(180)),(2000,6000))
+	#cliff_pose = (393506.713,6695855.641,961.337,rad(0),rad(-5),rad(20)) # easting, northing, elevation (m), roll, pitch, yaw
+	#cliff_bounds = ((393506.713,393506.713),(6695855.641,6695855.641),(961.337,961.337),(rad(-180),rad(180)),(rad(-180),rad(180)),(rad(-180),rad(180)),(2000,6000))
+	#tounge_pose = (393797.378, 6694756.620, 767.029,np.radians(0),np.radians(10),np.radians(10)) # easting, northing, elevation (m), roll, pitch, yaw
+	#tounge_bounds = ((393797.378,393797.378), (6694756.620,6694756.620 ),(767.029,767.029),(rad(-180),rad(180)),(rad(-180),rad(180)),(rad(-180),rad(180)),(2000,6000))
+	weather_pose = (392875.681,6696842.618,1403.860,np.radians(-5),np.radians(10),np.radians(100)) # easting, northing, elevation (m), roll, pitch, yaw
+	weather_bounds = ((392875.681,392875.681),(6696842.618,6696842.618),(1403.860,1403.860,),(rad(-90),rad(90)),(rad(-180),rad(180)),(rad(-180),rad(180)),(2000,6000))
 	
 
-	
+	'''
 	print("Processing Cliff \n")
 	cliff_cam = Camera(image= os.path.join(path,cliff), pose=cliff_pose,bounds=cliff_bounds, instance="cliff_cam")
 	cliff_cam.extract_metadata()
@@ -243,7 +244,7 @@ if __name__ == '__main__':
 	cliff_cam.gcp_imgcords_predict(check_gcp_path)
 	#cliff_cam.estimate_focal()
 	#cliff_cam.plotPoints()
-
+	
 	
 	print("Processing Tounge \n")
 	tounge_cam = Camera(image= os.path.join(path,tounge), pose=tounge_pose,bounds= tounge_bounds, instance="Tounge_cam")
@@ -252,7 +253,7 @@ if __name__ == '__main__':
 	tounge_cam.estimate_pose()
 	tounge_cam.gcp_imgcords_predict(check_gcp_path)
 	#tounge_cam.plotPoints()
-	
+	'''
 	
 	
 	print("Processing Weather \n")

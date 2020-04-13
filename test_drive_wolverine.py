@@ -17,6 +17,7 @@ MAX_DEPTH = 30e3
 STATIONS = ('cam_tounge','cam_weather','cam_cliff')
 
 # ---- Prepare Observers ----
+# ---- Prepare Observers ----
 
 start = datetime.datetime(2017, 12, 30, 00)
 end = datetime.datetime(2019, 8, 30, 00)
@@ -36,19 +37,26 @@ for station in STATIONS:
     inrange = np.logical_and(datetimes > start, datetimes < end)
     observers.append(glimpse.Observer(list(np.array(images)[inrange])))
 #----------------------------
-# Prepare DEM 
+# Prepare DEM
+''' 
+boxes = [obs.images[0].cam.viewbox(MAX_DEPTH)
+    for obs in observers]
+box = glimpse.helpers.intersect_boxes(boxes)
+'''
 paths = glob.glob(os.path.join(DEM_DIR, '*.tiff'))
 paths.sort()
 path = paths[0]
-dem = glimpse.Raster.read(path)
+dem = glimpse.Raster.read(path)#, xlim=box[0::3], ylim=box[1::3])
 print("DEM PATH: {}".format(path))
 dem.crop(zlim=(0, np.inf))
 dem.fill_crevasses(mask=~np.isnan(dem.Z), fill=True)
 
 
-
+observers_ = []
+observers_.append(observers[0])
+observers = observers_
+observers_ = []
 # ---- Prepare viewshed ----
-
 for obs in observers:
     dem.fill_circle(obs.xyz, radius=100)
 viewshed = dem.copy()
@@ -57,11 +65,10 @@ for obs in observers:
     viewshed.Z &= dem.viewshed(obs.xyz)
 
 # ---- Run Tracker ----
-xy = []
-xy0 = np.array((-3.18068e06,787898))
-xy.append(xy0)
-#xy = xy0 + np.vstack([xy for xy in
-#    itertools.product(range(-500, 500, 50), range(-500, 500, 50))])
+
+xy= np.array((394368,6696220))
+
+
 time_unit = datetime.timedelta(days=0.5)
 motion_models = [glimpse.CartesianMotionModel(
     xyi, time_unit=time_unit, dem=dem, dem_sigma=3, n=5000, xy_sigma=(2, 2),

@@ -1,8 +1,8 @@
-Camera Pose ~ Easting, Northing, Elevation, Roll, Pitch, Yaw : [ 3.92875681e+05  6.69684262e+06  1.41196048e+03  5.74798412e-02
- -1.49466863e-01  1.84969121e+00  5.74028765e+03]
-glacier1 | World Cords (Easting,Northing,Elev) :  394097.434 6695625.150 683.678  | Predicted Image Cords (U,V) Weather_cam:  6767.0 4057.0 
-glacier2 | World Cords (Easting,Northing,Elev) :  394097.980 6695889.873 747.501  | Predicted Image Cords (U,V) Weather_cam:  5960.0 4000.0 
-glacier3 | World Cords (Easting,Northing,Elev) :  394258.679 6696097.753 809.653  | Predicted Image Cords (U,V) Weather_cam:  4951.0 3696.0 
-margin1 | World Cords (Easting,Northing,Elev) :  394569.509 6695550.678 621.075  | Predicted Image Cords (U,V) Weather_cam:  5895.0 3674.0 
-margin2 | World Cords (Easting,Northing,Elev) :  394537.120 6695346.838 575.575  | Predicted Image Cords (U,V) Weather_cam:  6424.0 3736.0 
-snowy | World Cords (Easting,Northing,Elev) :  393646.770 6696293.364 947.709  | Predicted Image Cords (U,V) Weather_cam:  5694.0 4311.0 
+Camera Pose ~ Easting, Northing, Elevation, Roll, Pitch, Yaw : [ 3.92875681e+05  6.69684262e+06  1.40386000e+03  6.98964088e-02
+ -1.63792403e-01  1.84747297e+00  5.67729777e+03]
+glacier1 | World Cords (Easting,Northing,Elev) :  394097.434 6695625.150 683.678  | Predicted Image Cords (U,V) Weather_cam:  6750.0 3889.0 
+glacier2 | World Cords (Easting,Northing,Elev) :  394097.980 6695889.873 747.501  | Predicted Image Cords (U,V) Weather_cam:  5953.0 3841.0 
+glacier3 | World Cords (Easting,Northing,Elev) :  394258.679 6696097.753 809.653  | Predicted Image Cords (U,V) Weather_cam:  4954.0 3555.0 
+margin1 | World Cords (Easting,Northing,Elev) :  394569.509 6695550.678 621.075  | Predicted Image Cords (U,V) Weather_cam:  5886.0 3528.0 
+margin2 | World Cords (Easting,Northing,Elev) :  394537.120 6695346.838 575.575  | Predicted Image Cords (U,V) Weather_cam:  6410.0 3583.0 
+snowy | World Cords (Easting,Northing,Elev) :  393646.770 6696293.364 947.709  | Predicted Image Cords (U,V) Weather_cam:  5692.0 4132.0 
