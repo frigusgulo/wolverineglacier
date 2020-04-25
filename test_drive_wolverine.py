@@ -6,6 +6,7 @@ import glimpse
 from glimpse.imports import datetime,np,os
 import glob
 import itertools
+glimpse.config.use_numpy_matmul(False)
 os.environ['OMP_NUM_THREADS'] = '1'
 #==============================================
 
@@ -40,43 +41,42 @@ print("==========================")
 print("Position {}".format(observer[0].xyz))
 #----------------------------
 # Prepare DEM
-''' 
-boxes = [obs.images[0].cam.viewbox(MAX_DEPTH)
-    for obs in observers]
+
+boxes = [observer[0].images[0].cam.viewbox(MAX_DEPTH)]
 box = glimpse.helpers.intersect_boxes(boxes)
-'''
+
 paths = glob.glob(os.path.join(DEM_DIR, '*.tif'))
 paths.sort()
 path = paths[0]
-dem = glimpse.Raster.read(path)
+dem = glimpse.Raster.read(path, xlim=box[0::3], ylim=box[1::3])
 print("DEM PATH: {}".format(path))
 dem.crop(zlim=(0, np.inf))
 dem.fill_crevasses(mask=~np.isnan(dem.Z), fill=True)
 
 
 # ---- Prepare viewshed ----
-
+print(observer[0].xyz)
 dem.fill_circle(observer[0].xyz, radius=100)
 viewshed = dem.copy()
 viewshed.Z = np.ones(dem.shape, dtype=bool)
-#viewshed.Z &= dem.viewshed(observer[0].xyz)
+#viewshed.Z &= dem.viewshed(np.array([3.93506713e+05, 6.69585564e+06, 9.61337000e+02]),correction=True)
 
 # ---- Run Tracker ----
 
 xy0= np.array((394368,6696220))
 xy = xy0 + np.vstack([xy for xy in
-    itertools.product(range(-200, 200, 50), range(-200, 200, 50))])
+    itertools.product(range(-400, 300, 50), range(-400, 300, 50))])
 
-
-print(xy)
 motion_model = []
 time_unit = datetime.timedelta(days=1)
+
 for i in range(xy.shape[0]):
-    for j in range(xy.shape[1]):
-        motion_model.append(glimpse.CartesianMotionModel(xy[i,j], time_unit=time_unit, dem=dem, dem_sigma=3, n=5000, xy_sigma=(2, 2),vxyz_sigma=(5, 5, 0.4), axyz_sigma=(2, 2, 0.2)))
+    motion_model.append(glimpse.CartesianMotionModel(
+        xy[i,:], time_unit=time_unit, dem=dem, dem_sigma=3, n=5000, xy_sigma=(2, 2),
+        vxyz_sigma=(5, 5, 0.2), axyz_sigma=(2, 2, 0.2)))
 
 tracker = glimpse.Tracker(observers=observer, viewshed=viewshed)
-tracks = tracker.track(motion_models=motion_model, tile_size=(15, 15),parallel=32)
+tracks = tracker.track(motion_models=motion_model, tile_size=(10, 10),parallel=26)
 
 print("====================================")
 print(tracks.xyz)
