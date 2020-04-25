@@ -65,14 +65,13 @@ viewshed.Z = np.ones(dem.shape, dtype=bool)
 
 xy0= np.array((394368,6696220))
 xy = xy0 + np.vstack([xy for xy in
-    itertools.product(range(-10, 10, 1), range(-10, 10, 1))])
+    itertools.product(range(-50, 50, 25), range(-50, 50, 25))])
 
-
+print(xy.shape)
 motion_model = []
 time_unit = datetime.timedelta(days=1)
 for i in range(xy.shape[0]):
-    for j in range(xy.shape[1]):
-        motion_model.append(glimpse.CartesianMotionModel(xy, time_unit=time_unit, dem=dem, dem_sigma=3, n=5000, xy_sigma=(2, 2),vxyz_sigma=(5, 5, 0.4), axyz_sigma=(2, 2, 0.2)))
+    motion_model.append(glimpse.CartesianMotionModel(xy[i,:], time_unit=time_unit, dem=dem, dem_sigma=3, n=5000, xy_sigma=(2, 2),vxyz_sigma=(5, 5, 0.4), axyz_sigma=(2, 2, 0.2)))
 
 
 tracker = glimpse.Tracker(observers=observer, viewshed=viewshed)
