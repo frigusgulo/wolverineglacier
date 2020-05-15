@@ -1,7 +1,7 @@
 import glimpse
 import glob
 import numpy as np
-import os
+from glimpse.imports import datetime,np,os
 
 def chext(infile,extension):
     """
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     cliff_kyp = "/home/dunbar/Research/wolverine/wolverine/subdata/cliff"
     tounge_kyp = "/home/dunbar/Research/wolverine/wolverine/subdata/tounge"
 
-
+    time_unit = datetime.timedelta(days=1)
 
     cliff_imgs = '/home/dunbar/Research/wolverine/data/cam_cliff/images'
     cliffimages = glob.glob(os.path.join(cliff_imgs,'*.JPG'),recursive=True)
@@ -91,8 +91,8 @@ if __name__ == '__main__':
     cliffimages.sort(key= lambda img: img.datetime ) # sort by datetime
     cliff_viewopt = glimpse.optimize.KeypointMatcher(cliffimages)
     print("\nBuilding Cliff Keypoints\n")
-    cliff_viewopt.build_keypoints(clear_images=True)
-    cliff_viewopt.build_matches(overwrite=True,clear_matches=True,clear_keypoints=True,path=cliff_kyp)
+    cliff_viewopt.build_keypoints(clear_images=True,overwrite=True,clear_keypoints=True)
+    cliff_viewopt.build_matches(maxdt=time_unit,overwrite=True,clear_matches=True,clear_keypoints=True,path=cliff_kyp)
     cliffObserver = glimpse.Observer(cliffimages)
     cliffOpt = glimpse.optimize.ObserverCameras(cliffObserver,matches=cliff_viewopt).fit()
     save_observercams(cliffObserver,"/home/dunbar/Research/wolverine/data/cam_cliff/images_json")
@@ -103,8 +103,8 @@ if __name__ == '__main__':
     toungeimages = [glimpse.Image(path=imagepath,cam=tounge_cam.copy(),keypoints_path=os.path.join(tounge_kyp,chext(imagepath,"JSON"))) for imagepath in toungeimages]
     toungeimages.sort(key= lambda img: img.datetime ) # sort by datetime
     tounge_viewopt = glimpse.optimize.KeypointMatcher(toungeimages)
-    tounge_viewopt.build_keypoints(clear_images=True)
-    tounge_viewopt.build_matches(overwrite=True,clear_matches=True,clear_keypoints=True,path=tounge_kyp)
+    tounge_viewopt.build_keypoints(clear_images=True,overwrite=True,clear_keypoints=True)
+    tounge_viewopt.build_matches(maxdt=time_unit,overwrite=True,clear_matches=True,clear_keypoints=True,path=tounge_kyp)
     print("\nBuilding Tounge Keypoints\n")
     toungeObserver = glimpse.Observer(toungeimages)
     toungeOpt = glimpse.optimize.ObserverCameras(toungeObserver,matches=tounge_viewopt).fit()
