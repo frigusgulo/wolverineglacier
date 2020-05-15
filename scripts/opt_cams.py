@@ -83,33 +83,29 @@ if __name__ == '__main__':
     cliff_kyp = "/home/dunbar/Research/wolverine/wolverine/subdata/cliff"
     tounge_kyp = "/home/dunbar/Research/wolverine/wolverine/subdata/tounge"
 
+
+
     cliff_imgs = '/home/dunbar/Research/wolverine/data/cam_cliff/images'
     cliffimages = glob.glob(os.path.join(cliff_imgs,'*.JPG'),recursive=True)
-    cliffimages = [glimpse.Image(path=imagepath,cam=cliff_cam.copy()) for imagepath in cliffimages]
+    cliffimages = [glimpse.Image(path=imagepath,cam=cliff_cam.copy(),keypoints_path=os.path.join(cliff_kyp,chext(imagepath,"JSON") )) for imagepath in cliffimages]
     cliffimages.sort(key= lambda img: img.datetime ) # sort by datetime
     cliff_viewopt = glimpse.optimize.KeypointMatcher(cliffimages)
     print("\nBuilding Cliff Keypoints\n")
-
     cliff_viewopt.build_keypoints(clear_images=True)
     cliff_viewopt.build_matches(overwrite=True,clear_matches=True,clear_keypoints=True,path=cliff_kyp)
+    cliffObserver = glimpse.Observer(cliffimages)
+    cliffOpt = glimpse.optimize.ObserverCameras(cliffObserver,matches=cliff_viewopt).fit()
+    save_observercams(cliffObserver,"/home/dunbar/Research/wolverine/data/cam_cliff/images_json")
+
 
     tounge_imgs = '/home/dunbar/Research/wolverine/data/cam_tounge/images'
     toungeimages = glob.glob(os.path.join(tounge_imgs,'*.JPG'),recursive=True)
-    toungeimages = [glimpse.Image(path=imagepath,cam=tounge_cam.copy()) for imagepath in toungeimages]
+    toungeimages = [glimpse.Image(path=imagepath,cam=tounge_cam.copy(),keypoints_path=os.path.join(tounge_kyp,chext(imagepath,"JSON"))) for imagepath in toungeimages]
     toungeimages.sort(key= lambda img: img.datetime ) # sort by datetime
     tounge_viewopt = glimpse.optimize.KeypointMatcher(toungeimages)
     tounge_viewopt.build_keypoints(clear_images=True)
     tounge_viewopt.build_matches(overwrite=True,clear_matches=True,clear_keypoints=True,path=tounge_kyp)
     print("\nBuilding Tounge Keypoints\n")
-
-
-
-    cliffObserver = glimpse.Observer(cliffimages)
     toungeObserver = glimpse.Observer(toungeimages)
-
-    cliffOpt = glimpse.optimize.ObserverCameras(cliffObserver,matches=cliff_viewopt).fit()
     toungeOpt = glimpse.optimize.ObserverCameras(toungeObserver,matches=tounge_viewopt).fit()
-
-    save_observercams(cliffObserver,"/home/dunbar/Research/wolverine/data/cam_cliff/images_json")
-
     save_observercams(toungeObserver,"/home/dunbar/Research/wolverine/data/cam_tounge/images_json")
