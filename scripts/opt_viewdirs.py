@@ -96,24 +96,28 @@ cliff.matcher.build_keypoints(contrastThreshold=0.02, overwrite=False,clear_imag
 '''
 if __name__ == "__main__":
 
-	tounge.camdict =  dict(sensorsz=(35.9,24),xyz=(393797.3785,6694756.62, 767.029), viewdir=(2.85064110e-01,2.54395619e-02, 6.17540651e-03))
-	tounge.worldpts = np.array([[393610.609, 6695578.333, 782.287],[393506.713, 6695855.641, 961.337],[393868.946, 6695316.571,644.398]])
-	tounge.imgpts = np.array([[479, 2448],[164, 1398],[2813, 3853]])
-	tounge.imagepaths = glob.glob(os.path.join(root, STATIONS[1],'images','*.JPG'),recursive=True)
-	tounge.images = [glimpse.Image(path=tounge.imagepaths[0],exif=glimpse.Exif(tounge.imagepaths[0]),cam=tounge.camdict.copy())]
-	tounge.images[0].anchor=True
-	tounge.points = glimpse.optimize.Points(tounge.images[0].cam,tounge.imgpts,tounge.worldpts)
+	tounge_camdict =  dict(sensorsz=(35.9,24),xyz=(393797.3785,6694756.62, 767.029), viewdir=(2.85064110e-01,2.54395619e-02, 6.17540651e-03))
+	tounge_worldpts = np.array([[393610.609, 6695578.333, 782.287],[393506.713, 6695855.641, 961.337],[393868.946, 6695316.571,644.398]])
+	tounge_imgpts = np.array([[479, 2448],[164, 1398],[2813, 3853]])
+	tounge_imagepaths = glob.glob(os.path.join("/home/dunbar/Research/wolverine/data/cam_tounge/images",'*.JPG'),recursive=True)
+	tounge_images = [glimpse.Image(path=tounge_imagepaths[0],exif=glimpse.Exif(tounge_imagepaths[0]),cam=tounge_camdict.copy())]
+	tounge_images[0].anchor=True
+	tounge_points = glimpse.optimize.Points(tounge_images[0].cam,tounge_imgpts,tounge_worldpts)
 
 
-	Cameras = glimpse.optimize.Cameras([tounge.images[0].cam],[tounge.points],dict(viewdir=True,f=True))
+	Cameras = glimpse.optimize.Cameras([tounge_images[0].cam],[tounge_points],dict(viewdir=True,f=True,p=True))
 	Cameras.set_cameras(Cameras.fit())
 
-	[tounge.images.append(glimpse.Image(path=imagepath,cam=tounge.images[0].cam.copy())) for imagepath in tounge.imagepaths[1:]]
-	tounge.matcher = glimpse.optimize.KeypointMatcher(tounge.images)
-	tounge.matcher.build_keypoints(contrastThreshold=0.02, overwrite=False,clear_images=True, clear_keypoints=True)
-	write_matches(tounge.matcher)
-	tounge.matcher.convert_matches(glimpse.optimize.RotationMatchesXY,clear_uvs=True)
-	tounge.observer = glimpse.Observer(tounge.images)
-	tounge.observercameras = glimpse.optimize.ObserverCameras(tounge.observer,matches=tounge.matcher.matches,anchors=tounge.images[0])
-	tounge.observercameras.set_cameras(tounge.observercameras.fit())
-	save_observercams(tounge.observer,"/home/dunbar/Research/wolverine/data/cam_tounge/images_json")
+	[tounge_images.append(glimpse.Image(path=imagepath,cam=tounge_images[0].cam.copy())) for imagepath in tounge_imagepaths[1:]]
+	tounge_images.sort(key= lambda img: img.datetime ) # sort by datetime
+	tounge_matcher = glimpse.optimize.KeypointMatcher(tounge_images)
+	tounge_matcher.build_keypoints(contrastThreshold=0.02, overwrite=False,clear_images=True, clear_keypoints=True)
+	tounge_matcher.build_matches(
+        maxdt=MAXDT, seq=MATCH_SEQ,
+        path=MATCHES_PATH, overwrite=True, max_ratio=0.75,
+        max_distance=None, parallel=4, weights=True,
+        clear_keypoints=True, clear_matches=True)
+	tounge_observer = glimpse.Observer(tounge.images)
+	tounge_observercameras = glimpse.optimize.ObserverCameras(tounge_observer,matches=tounge_matcher.matches,anchors=tounge.images[0])
+	tounge_observercameras.set_cameras(tounge_observercameras.fit())
+	save_observercams(tounge_observer,"/home/dunbar/Research/wolverine/data/cam_tounge/images_json")
