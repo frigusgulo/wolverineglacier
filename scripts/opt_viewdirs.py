@@ -98,13 +98,15 @@ cliff.matcher.build_keypoints(contrastThreshold=0.02, overwrite=False,clear_imag
 if __name__ == "__main__":
 	base_model = '/home/dunbar/Research/wolverine/wolverineglacier/scripts/intrinsicmodel.json'
 	base_cam = glimpse.Camera.read(base_model)
+	tounge_imagepaths = glob.glob(os.path.join("/home/dunbar/Research/wolverine/data/cam_tounge/images",'*.JPG'),recursive=True)
 
 	tounge_camdict =  dict(sensorsz=(35.9,24),xyz=(393797.3785,6694756.62, 767.029), viewdir=(2.85064110e-01,2.54395619e-02, 6.17540651e-03))
-	#tounge_camdict = glimpse.helpers.merge_dicts(tounge_camdict,base_cam.as_dict())
-
+	tounge_camdict = glimpse.helpers.merge_dicts(base_cam.as_dict(),tounge_camdict)
+	tounge_camdict = glimpse.helpers.merge_dicts(glimpse.Image(path=tounge_imagepaths[0],exif=glimpse.Exif(tounge_imagepaths[0])).cam.as_dict(),tounge_camdict)
+	
 	tounge_worldpts = np.array([[393610.609, 6695578.333, 782.287],[393506.713, 6695855.641, 961.337],[393868.946, 6695316.571,644.398]])
 	tounge_imgpts = np.array([[479, 2448],[164, 1398],[2813, 3853]])
-	tounge_imagepaths = glob.glob(os.path.join("/home/dunbar/Research/wolverine/data/cam_tounge/images",'*.JPG'),recursive=True)
+	
 	tounge_images = [glimpse.Image(path=tounge_imagepaths[0],exif=glimpse.Exif(tounge_imagepaths[0]),cam=tounge_camdict.copy())]
 	tounge_images[0].anchor=True
 	tounge_points = glimpse.optimize.Points(tounge_images[0].cam,tounge_imgpts,tounge_worldpts)
