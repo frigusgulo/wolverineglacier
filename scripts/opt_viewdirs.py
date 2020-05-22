@@ -94,9 +94,14 @@ cliff.points = glimpse.optimize.Points(cliff.images[0].cam,cliff.imgpts,cliff.wo
 cliff.matcher = glimpse.optimize.KeypointMatcher(cliff.images)
 cliff.matcher.build_keypoints(contrastThreshold=0.02, overwrite=False,clear_images=True, clear_keypoints=True)
 '''
+
 if __name__ == "__main__":
+	base_model = '/home/dunbar/Research/wolverine/wolverineglacier/scripts/intrinsicmodel.json'
+	base_cam = glimpse.Camera.read(base_model)
 
 	tounge_camdict =  dict(sensorsz=(35.9,24),xyz=(393797.3785,6694756.62, 767.029), viewdir=(2.85064110e-01,2.54395619e-02, 6.17540651e-03))
+	#tounge_camdict = glimpse.helpers.merge_dicts(tounge_camdict,base_cam.as_dict())
+
 	tounge_worldpts = np.array([[393610.609, 6695578.333, 782.287],[393506.713, 6695855.641, 961.337],[393868.946, 6695316.571,644.398]])
 	tounge_imgpts = np.array([[479, 2448],[164, 1398],[2813, 3853]])
 	tounge_imagepaths = glob.glob(os.path.join("/home/dunbar/Research/wolverine/data/cam_tounge/images",'*.JPG'),recursive=True)
@@ -117,7 +122,16 @@ if __name__ == "__main__":
         path=MATCHES_PATH, overwrite=True, max_ratio=0.75,
         max_distance=None, parallel=4, weights=True,
         clear_keypoints=True, clear_matches=True)
-	tounge_observer = glimpse.Observer(tounge.images)
-	tounge_observercameras = glimpse.optimize.ObserverCameras(tounge_observer,matches=tounge_matcher.matches,anchors=tounge.images[0])
-	tounge_observercameras.set_cameras(tounge_observercameras.fit())
-	save_observercams(tounge_observer,"/home/dunbar/Research/wolverine/data/cam_tounge/images_json")
+
+	Cameras = glimpse.optimize.Cameras([image.cam for image in tounge_images],[tounge_matcher.matches,tounge_points]), cam_params=dict(viewdir=True) )
+	new_params = Cameras.fit()
+	Cameras.set_cameras(new_params)
+	
+	directory = "~/Research/wolverine/data/cam_tounge/images_json/"
+	for images,newcam in  zip(tounge_images,Cameras.cams):
+		filename = images.path
+		path = os.path.join(directory,chext(filename,"JSON"))
+	try:
+		newcam.write(path,attributes=("viewdir","xyz","sensorsz","fmm","cmm","p","k","imgsz","f"))
+	except:
+		print("Image {} Has Undefined Camera".format(images.path))
