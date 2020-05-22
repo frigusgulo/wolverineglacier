@@ -77,7 +77,7 @@ def save_observercams(observer,directory,print_path=False):
             print("Image {} Has Undefined Camera".format(images.path))
 # ----------------------------
 root = '~/Research/wolverine/data'
-MATCHES_PATH = os.path.join(root,'subdata/matches')
+TOUNGE_MATCHES_PATH = os.path.join(root,'subdata/matches/tounge.pkl')
 KEYPOINTS_PATH = os.path.join(root,'subdata/keypoints')
 
 STATIONS = ('cam_cliff','cam_tounge')
@@ -102,8 +102,8 @@ if __name__ == "__main__":
 
 	tounge_camdict =  dict(sensorsz=(35.9,24),xyz=(393797.3785,6694756.62, 767.029), viewdir=(2.85064110e-01,2.54395619e-02, 6.17540651e-03))
 	tounge_camdict = glimpse.helpers.merge_dicts(base_cam.as_dict(),tounge_camdict)
-	tounge_camdict = glimpse.helpers.merge_dicts(glimpse.Image(path=tounge_imagepaths[0],exif=glimpse.Exif(tounge_imagepaths[0])).cam.as_dict(),tounge_camdict)
-	
+	#tounge_camdict = glimpse.helpers.merge_dicts(glimpse.Image(path=tounge_imagepaths[0],exif=glimpse.Exif(tounge_imagepaths[0]),cam=tounge_camdict))
+
 	tounge_worldpts = np.array([[393610.609, 6695578.333, 782.287],[393506.713, 6695855.641, 961.337],[393868.946, 6695316.571,644.398]])
 	tounge_imgpts = np.array([[479, 2448],[164, 1398],[2813, 3853]])
 	
@@ -112,20 +112,34 @@ if __name__ == "__main__":
 	tounge_points = glimpse.optimize.Points(tounge_images[0].cam,tounge_imgpts,tounge_worldpts)
 
 
-	Cameras = glimpse.optimize.Cameras([tounge_images[0].cam],[tounge_points],dict(viewdir=True,f=True,p=True))
+	Cameras = glimpse.optimize.Cameras([tounge_images[0].cam],[tounge_points],dict(viewdir=True,f=True,p=True,c=True))
 	Cameras.set_cameras(Cameras.fit())
 
 	[tounge_images.append(glimpse.Image(path=imagepath,cam=tounge_images[0].cam.copy())) for imagepath in tounge_imagepaths[1:]]
 	tounge_images.sort(key= lambda img: img.datetime ) # sort by datetime
 	tounge_matcher = glimpse.optimize.KeypointMatcher(tounge_images)
-	tounge_matcher.build_keypoints(contrastThreshold=0.02, overwrite=False,clear_images=True, clear_keypoints=True)
+
+	tounge_matcher.build_keypoints(
+		contrastThreshold=0.02, 
+		overwrite=False,
+		clear_images=True, 
+		clear_keypoints=True)
+
+	print("\nBuilding Matches\n")
+
 	tounge_matcher.build_matches(
         maxdt=MAXDT, seq=MATCH_SEQ,
-        path=MATCHES_PATH, overwrite=True, max_ratio=0.75,
-        max_distance=None, parallel=4, weights=True,
-        clear_keypoints=True, clear_matches=True)
+        path=TOUNGE_MATCHES_PATH, max_ratio=0.75,
+        max_distance=None, parallel=4, weights=True)
 
-	Cameras = glimpse.optimize.Cameras([image.cam for image in tounge_images],[tounge_matcher.matches,tounge_points]), cam_params=dict(viewdir=True) )
+	#tounge_matches = np.load(TOUNGE_MATCHES_PATH)
+	Cameras = glimpse.optimize.Cameras(
+		cams = [image.cam for image in tounge_images], 
+		controls=list(tounge_matcher.matches.data),
+		cam_params=dict(viewdir=True)
+		)
+
+
 	new_params = Cameras.fit()
 	Cameras.set_cameras(new_params)
 	
