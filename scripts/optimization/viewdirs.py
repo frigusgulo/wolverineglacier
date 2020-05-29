@@ -28,7 +28,7 @@ class optView():
 
 	def modelRef(self):
 		points = glimpse.optimize.Points(self.refimg.cam,self.imagepoints,self.worldpoints)
-		camera = glimpse.optimize.Cameras(cams=[self.refimg.cam],controls=[points],cam_params=dict(viewdir=True,f=True,p=True,c=True))
+		camera = glimpse.optimize.Cameras(cams=[self.refimg.cam],controls=[points],cam_params=dict(viewdir=True))
 		camera.set_cameras(camera.fit())
 
 
@@ -40,14 +40,11 @@ class optView():
 
 
 	def iterMatch(self,setSize=25):
-		subSet = []
-		anchorimage = None
+		subSet = []  
 		for i,image in enumerate(self.images):
 			subSet.append(image)
 			if i > 0 and i % setSize == 0 or i == len(self.images)-1:
 				print("\nSubset: {} Images: {}\n".format((i+1),len(subSet)))
-				if anchorimage is not None and i > setSize:
-					subSet.insert(0,anchorimage)
 				matcher = glimpse.optimize.KeypointMatcher(subSet)
 
 				matcher.build_keypoints(
@@ -83,13 +80,15 @@ class optView():
 
 				
 				Cameras.set_cameras(fit)
-				anchorimage = subSet[-1]
-				anchorimage.anchor=True
-				subSet = None
+				overlap = []
+				[overlap.append(image) for image in subSet[-4:] ]
+
+				subSet = []
 				matcher = None
 				Cameras = None
 				fit = None
-				subSet = []
+				[subSet.append(image) for image in overlap]
+
 	def run(self):
 		self.modelRef()
 		self.getImages()
@@ -102,3 +101,14 @@ class optView():
 			path = os.path.join(directory,chext(filename,"JSON"))
 			print("\n",path,"\n")
 			newcam.write(path=path,attributes=("viewdir","xyz","sensorsz","fmm","cmm","p","k","imgsz","f"))
+
+if __name__ == "__main__":
+	imagedir = "/home/dunbar/Research/wolverine/data/cam_cliff/images"
+	cliffimgpts = np.array([[5193, 549],[3101, 642],[6153.0, 2297.0]])
+	cliffworldpts = np.array([[408245.86,6695847.03,1560 ],[416067.22,6707259.97,988],[394569.509, 6695550.678, 621.075]])
+	basedict = dict(sensorsz=(35.9,24),xyz=(393506.713,6695855.64, 961.3370), viewdir=(6.55401513e+01, -1.95787507e+01,  7.90589866e+00))
+	basemodelpath = "/home/dunbar/Research/wolverine/wolverineglacier/viewdirs/intrinsicmodel.json"
+
+	cliffviewopt = optView(imagedir,basemodelpath,basedict,cliffimgpts,cliffworldpts)
+	cliffviewopt.run()
+
