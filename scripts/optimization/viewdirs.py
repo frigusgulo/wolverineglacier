@@ -39,7 +39,7 @@ class optView():
 		print("Found {} Images \n".format(len(self.images)))
 
 
-	def iterMatch(self,setSize=50):
+	def iterMatch(self,setSize=25):
 		subSet = []
 		anchorimage = None
 		for i,image in enumerate(self.images):
@@ -77,7 +77,11 @@ class optView():
 			    	cam_params=camParams
 			    	)
 
+				print("\nFitting\n")
 				fit = Cameras.fit(ftol=1)
+				print("\nFitting Complete\n")
+
+				
 				Cameras.set_cameras(fit)
 				anchorimage = subSet[-1]
 				anchorimage.anchor=True
