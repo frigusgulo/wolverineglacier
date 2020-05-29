@@ -49,11 +49,15 @@ if __name__ == '__main__':
     cliff_img = '/home/dunbar/Research/wolverine/data/cam_cliff/images/cam_cliff_0493.JPG'
     tounge_img = '/home/dunbar/Research/wolverine/data/cam_tounge/images/cam_tounge_0521.JPG'
     #weather_img = '/home/dunbar/Research/wolverine/data/cam_weather/images/cam_weather_0056.JPG'
-
+    base_model = '~/Research/wolverine/wolverineglacier/scripts/intrinsicmodel.json'
+    base_cam = glimpse.Camera.read(base_model)
     cliff_cam =   dict(sensorsz=(35.9,24),xyz=(393506.713,6695855.64, 961.3370), viewdir=(6.55401513e+01, -1.95787507e+01,  7.90589866e+00))
     tounge_cam =  dict(sensorsz=(35.9,24),xyz=(393797.3785,6694756.62, 767.029), viewdir=(2.85064110e-01,2.54395619e-02, 6.17540651e-03))
     #wx_cam =      dict(sensorsz=(35.9,24),xyz=(392875.681,6696842.62,  1403.860),viewdir=(6.98964088e-02, -1.63792403e-01,  1.84747297e+00))
 
+    cliff_cam = glimpse.helpers.merge_dicts(cliff_cam,base_cam.as_dict)
+    tounge_cam = glimpse.helpers.merge_dicts(tounge_cam,base_cam.as_dict)
+    
     cliff = glimpse.Image(cliff_img,exif=glimpse.Exif(cliff_img),cam=cliff_cam)
     tounge = glimpse.Image(tounge_img,exif=glimpse.Exif(tounge_img),cam=tounge_cam)
     #weather = glimpse.Image(weather_img,exif=glimpse.Exif(weather_img),cam=wx_cam)
@@ -68,17 +72,14 @@ if __name__ == '__main__':
     tounge_points = glimpse.optimize.Points(tounge.cam,tounge_imgpts,tounge_worldpts)
     #weather_points = glimpse.optimize.Points(weather.cam,weather_imgpts,weather_worldpts)
 
-    cliffparams = glimpse.optimize.Cameras([cliff.cam],[cliff_points],dict(viewdir=True,p=True,k=True,f=True))
-    cliffparams = cliffparams.fit()
-    toungeparams = glimpse.optimize.Cameras([tounge.cam],[tounge_points],dict(viewdir=True,p=True,k=True,f=True))
-    toungeparams = toungeparams.fit()
+    Cameras = glimpse.optimize.Cameras([cliff.cam,tounge.cam],[cliff_points,tounge_points],dict(viewdir=True,f=True))
+    params = Cameras.fit()
+    Cameras.set_cameras(params)
+   
 
-    cliff_optdict = dict(viewdir=cliffparams[:3],p=cliffparams[3:5],k=cliffparams[5:11],f=cliffparams[11:])
-    tounge_optdict = dict(viewdir=toungeparams[:3],p=toungeparams[3:5],k=toungeparams[5:],f=cliffparams[11:])
-    cliff_cam = cliff.cam.as_dict(attributes=("xyz","viewdir","fmm","cmm","sensorsz","imgsz","f","c","k","p"))
-    tounge_cam = tounge.cam.as_dict(attributes=("xyz","viewdir","fmm","cmm","sensorsz","imgsz","f","c","k","p"))
-    cliff_cam = glimpse.helpers.merge_dicts(cliff_cam,cliff_optdict)
-    tounge_cam = glimpse.helpers.merge_dicts(tounge_cam,tounge_optdict)
+    cliff_optdict = dict(viewdir=cliffparams[:3],f=cliffparams[3:])
+    tounge_optdict = dict(viewdir=toungeparams[:3],f=cliffparams[3:])
+
 
     cliff_kyp = "/home/dunbar/Research/wolverine/wolverine/subdata/cliff"
     tounge_kyp = "/home/dunbar/Research/wolverine/wolverine/subdata/tounge"
@@ -92,7 +93,7 @@ if __name__ == '__main__':
     cliff_viewopt = glimpse.optimize.KeypointMatcher(cliffimages)
     print("\nBuilding Cliff Keypoints\n")
     cliff_viewopt.build_keypoints(clear_images=True,overwrite=True,clear_keypoints=True)
-    cliff_viewopt.build_matches(maxdt=time_unit,overwrite=True,clear_matches=True,clear_keypoints=True,path=cliff_kyp)
+    cliff_viewopt.build_matches(maxdt=time_unit,overwrite=True,clear_matches=True,clear_keypoints=True)
     cliffObserver = glimpse.Observer(cliffimages)
     cliffOpt = glimpse.optimize.ObserverCameras(cliffObserver,matches=cliff_viewopt).fit()
     save_observercams(cliffObserver,"/home/dunbar/Research/wolverine/data/cam_cliff/images_json")
@@ -104,7 +105,7 @@ if __name__ == '__main__':
     toungeimages.sort(key= lambda img: img.datetime ) # sort by datetime
     tounge_viewopt = glimpse.optimize.KeypointMatcher(toungeimages)
     tounge_viewopt.build_keypoints(clear_images=True,overwrite=True,clear_keypoints=True)
-    tounge_viewopt.build_matches(maxdt=time_unit,overwrite=True,clear_matches=True,clear_keypoints=True,path=tounge_kyp)
+    tounge_viewopt.build_matches(maxdt=time_unit,overwrite=True,clear_matches=True,clear_keypoints=True)
     print("\nBuilding Tounge Keypoints\n")
     toungeObserver = glimpse.Observer(toungeimages)
     toungeOpt = glimpse.optimize.ObserverCameras(toungeObserver,matches=tounge_viewopt).fit()

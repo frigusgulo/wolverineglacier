@@ -133,21 +133,26 @@ if __name__ == "__main__":
         max_distance=None, parallel=4, weights=True)
 
 	#tounge_matches = np.load(TOUNGE_MATCHES_PATH)
+	#group_indices = {key: 0 for _, key in enumerate(np.arange(len(tounge_images)).tolist()) }
+	cam_params = [dict() if img.anchor else dict(viewdir=True) for img in tounge_images]
+	#group_params = [dict(c=True,p=True) for img in tounge_images]
+
 	Cameras = glimpse.optimize.Cameras(
 		cams = [image.cam for image in tounge_images], 
 		controls=list(tounge_matcher.matches.data),
-		cam_params=dict(viewdir=True)
+		cam_params=cam_params
+		#group_params = group_params
 		)
 
+	print("\nFitting Cameras\n")
 
-	new_params = Cameras.fit()
-	Cameras.set_cameras(new_params)
+	fit = Cameras.fit(ftol=1, full=True, loss='soft_l1')
+
+	Cameras.set_cameras(fit.params)
 	
-	directory = "~/Research/wolverine/data/cam_tounge/images_json/"
+	directory = "/home/dunbar/Research/wolverine/data/cam_tounge/images_json/"
 	for images,newcam in  zip(tounge_images,Cameras.cams):
 		filename = images.path
 		path = os.path.join(directory,chext(filename,"JSON"))
-	try:
-		newcam.write(path,attributes=("viewdir","xyz","sensorsz","fmm","cmm","p","k","imgsz","f"))
-	except:
-		print("Image {} Has Undefined Camera".format(images.path))
+		print("\n",path,"\n")
+		newcam.write(path=path,attributes=("viewdir","xyz","sensorsz","fmm","cmm","p","k","imgsz","f"))

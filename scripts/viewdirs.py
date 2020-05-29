@@ -39,14 +39,14 @@ class optView():
 		print("Found {} Images \n".format(len(self.images)))
 
 
-	def iterMatch(self,setSize=5):
+	def iterMatch(self,setSize=50):
 		subSet = []
 		anchorimage = None
 		for i,image in enumerate(self.images):
 			subSet.append(image)
 			if i > 0 and i % setSize == 0 or i == len(self.images)-1:
 				print("\nSubset: {} Images: {}\n".format((i+1),len(subSet)))
-				if anchorimage is not None:
+				if anchorimage is not None and i > setSize:
 					subSet.insert(0,anchorimage)
 				matcher = glimpse.optimize.KeypointMatcher(subSet)
 
@@ -77,8 +77,8 @@ class optView():
 			    	cam_params=camParams
 			    	)
 
-				fit = Cameras.fit(ftol=1, full=True, loss='soft_l1')
-				Cameras.set_cameras(fit.params)
+				fit = Cameras.fit(ftol=1)
+				Cameras.set_cameras(fit)
 				anchorimage = subSet[-1]
 				anchorimage.anchor=True
 				subSet = None
