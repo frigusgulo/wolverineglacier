@@ -11,9 +11,8 @@ MAX_RATIO = 0.6
 MAX_ERROR = 0.03 # fraction of image width
 N_MATCHES = 50
 MIN_MATCHES = 50
-root = '~/Research/wolverine/data'
-TOUNGE_MATCHES_PATH = os.path.join(root,'subdata/matches/tounge.pkl')
-
+#root = '~/Research/wolverine/data'
+TOUNGE_MATCHES_PATH = './tounge.pkl'
 class optView():
 	def __init__(self,imagedir,basemodelpath,basedict,imgpoints,worldpoints):
 		self.imagepaths =  glob.glob(os.path.join(imagedir,'*.JPG'),recursive=True)
@@ -28,8 +27,8 @@ class optView():
 
 	def modelRef(self):
 		points = glimpse.optimize.Points(self.refimg.cam,self.imagepoints,self.worldpoints)
-		camera = glimpse.optimize.Cameras(cams=[self.refimg.cam],controls=[points],cam_params=dict(viewdir=True))
-		camera.set_cameras(camera.fit())
+		camera = glimpse.optimize.Cameras(cams=[self.refimg.cam],controls=[points],cam_params=dict(viewdir=True,f=True))
+		camera.set_cameras(camera.fit(method='lbfgsb'))
 
 
 	def getImages(self):
@@ -39,7 +38,7 @@ class optView():
 		print("Found {} Images \n".format(len(self.images)))
 
 
-	def iterMatch(self,setSize=25):
+	def iterMatch(self,setSize=100):
 		subSet = []  
 		for i,image in enumerate(self.images):
 			subSet.append(image)
@@ -75,7 +74,7 @@ class optView():
 			    	)
 
 				print("\nFitting\n")
-				fit = Cameras.fit(ftol=1)
+				fit = Cameras.fit(method='lbfgsb')
 				print("\nFitting Complete\n")
 
 				
@@ -103,10 +102,17 @@ class optView():
 			newcam.write(path=path,attributes=("viewdir","xyz","sensorsz","fmm","cmm","p","k","imgsz","f"))
 
 if __name__ == "__main__":
-	imagedir = "/home/dunbar/Research/wolverine/data/cam_cliff/images"
+
+	# Directory containing images
+	imagedir = "/home/dunbar/Research/wolverine/data/cam_cliff/images" 
+
 	cliffimgpts = np.array([[5193, 549],[3101, 642],[6153.0, 2297.0]])
 	cliffworldpts = np.array([[408245.86,6695847.03,1560 ],[416067.22,6707259.97,988],[394569.509, 6695550.678, 621.075]])
+
+	#base dictionary for sensorsize, position, and initial viewdir
 	basedict = dict(sensorsz=(35.9,24),xyz=(393506.713,6695855.64, 961.3370), viewdir=(6.55401513e+01, -1.95787507e+01,  7.90589866e+00))
+
+	#intrinisic model path
 	basemodelpath = "/home/dunbar/Research/wolverine/wolverineglacier/viewdirs/intrinsicmodel.json"
 
 	cliffviewopt = optView(imagedir,basemodelpath,basedict,cliffimgpts,cliffworldpts)
