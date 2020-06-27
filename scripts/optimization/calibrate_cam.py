@@ -5,6 +5,8 @@ import glimpse
 import  glimpse.convert as gc
 from glimpse.helpers import merge_dicts
 import matplotlib.pyplot as plt
+import sys
+import os
 def parse_camera_matrix(x):
     """
     Return fx, fy, cx, and cy from camera matrix.
@@ -35,8 +37,10 @@ objp[:,2]*=25 #convert to mm
 # Arrays to store object points and image points from all the images.
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
-images = glob.glob('/media/dunbar/K-1 II/DCIM/104_0101/*.JPG')
+dir_ = sys.argv[1]
+images = glob.glob(os.path.join(dir_,'*.JPG'))
 print("Found ",len(images)," Images")
+print("Dims: {} {}".format(dimx,dimy))
 for fname in images:
     print(fname,"\n")
     img = cv.imread(fname)
