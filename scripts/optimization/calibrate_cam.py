@@ -28,10 +28,11 @@ def parse_distortion_coefficients(x):
 
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+chessboard_flags = cv.CALIB_CB_ADAPTIVE_THRESH + cv.CALIB_CB_FAST_CHECK + cv.CALIB_CB_NORMALIZE_IMAGE
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-dimx = 7
-dimy = 6
-edgesizeMeters = 1
+dimx = 6
+dimy = 9
+edgesizeMeters = 0.0204216 #meters
 objp = np.zeros((dimx*dimy,3), np.float32)
 objp[:,:2] = np.mgrid[0:dimx,0:dimy].T.reshape(-1,2)*edgesizeMeters
 # Arrays to store object points and image points from all the images.
@@ -41,20 +42,26 @@ dir_ = sys.argv[1]
 images = glob.glob(os.path.join(dir_,'*.JPG'))
 print("Found ",len(images)," Images")
 print("Dims: {} {}".format(dimx,dimy))
+count = 0
 for fname in images:
     print(fname,"\n")
     img = cv.imread(fname)
     gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
     # Find the chess board corners
-    ret, corners = cv.findChessboardCorners(gray, (dimx,dimy))
+    ret, corners = cv.findChessboardCorners(gray, (dimx,dimy),flags=chessboard_flags)
     # If found, add object points, image points (after refining them)
     print("Corner status: ",ret)
     keep = False
     if ret == True:
+        count += 1
+        cv.drawChessboardCorners(gray, (dimx, dimy), corners, ret)
+        result_name = 'board'+"_"+fname
+        cv.imwrite(result_name, gray)
         objpoints.append(objp)
         corners = np.squeeze(corners)
         cv.cornerSubPix(gray,corners, (3,3), (-1,-1), criteria)
         imgpoints.append(corners)
+print( "{}/{} Good Images Used".format(count,len(images)) )
         
 ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 print("Camera Matrix: ",mtx)
