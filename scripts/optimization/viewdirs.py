@@ -20,15 +20,13 @@ class optView():
 		self.imagepoints = imgpoints
 		self.worldpoints = worldpoints
 		self.refimg = glimpse.Image(path=self.imagepaths[0],exif=glimpse.Exif(self.imagepaths[0]),cam=self.basecam.copy())
-		#self.refimg.anchor=True
-		
-	
+		print(self.basecam)
 
 
 	def modelRef(self):
 		points = glimpse.optimize.Points(self.refimg.cam,self.imagepoints,self.worldpoints)
-		camera = glimpse.optimize.Cameras(cams=[self.refimg.cam],controls=[points],cam_params=dict(viewdir=True,f=True))
-		camera.set_cameras(camera.fit(method='lbfgsb'))
+		camera = glimpse.optimize.Cameras(cams=[self.refimg.cam],controls=[points],cam_params=dict(viewdir=True,c=True,f=True))
+		camera.set_cameras(camera.fit(method='lm'))
 
 
 	def getImages(self):
@@ -37,8 +35,7 @@ class optView():
 		self.images.sort(key= lambda img: img.datetime)
 		print("Found {} Images \n".format(len(self.images)))
 
-
-	def iterMatch(self,setSize=100):
+	def iterMatch(self,setSize=25):
 		subSet = []  
 		for i,image in enumerate(self.images):
 			subSet.append(image)
@@ -57,8 +54,8 @@ class optView():
         			path=TOUNGE_MATCHES_PATH,
 			        max_ratio=0.75,
 			        weights=True,
-			        max_distance=None,
-			        parallel=4)
+			        max_distance=None
+			        )
 
 				matcher.filter_matches(clear_weights=True)
 				matcher.convert_matches(glimpse.optimize.RotationMatchesXY, clear_uvs=True)
@@ -74,24 +71,26 @@ class optView():
 			    	)
 
 				print("\nFitting\n")
-				fit = Cameras.fit(method='lbfgsb')
+				fit = Cameras.fit()
 				print("\nFitting Complete\n")
 
 				
 				Cameras.set_cameras(fit)
-				overlap = []
-				[overlap.append(image) for image in subSet[-4:] ]
+			#	overlap = []
+			#	[overlap.append(image) for image in subSet[-4:] ]
 
 				subSet = []
 				matcher = None
 				Cameras = None
 				fit = None
-				[subSet.append(image) for image in overlap]
+			#	[subSet.append(image) for image in overlap]
+                              
 
 	def run(self):
 		self.modelRef()
 		self.getImages()
 		self.iterMatch()
+                self.saveCams()
 
 	def saveCams(self):
 		directory = self.savedir
@@ -113,8 +112,8 @@ if __name__ == "__main__":
 	basedict = dict(sensorsz=(35.9,24),xyz=(393506.713,6695855.64, 961.3370), viewdir=(6.55401513e+01, -1.95787507e+01,  7.90589866e+00))
 
 	#intrinisic model path
-	basemodelpath = "/home/dunbar/Research/wolverine/wolverineglacier/viewdirs/intrinsicmodel.json"
+	basemodelpath = "/home/dunbar/Research/wolverine/wolverineglacier/scripts/intrinsicmodel.json"
 
 	cliffviewopt = optView(imagedir,basemodelpath,basedict,cliffimgpts,cliffworldpts)
 	cliffviewopt.run()
-
+	
